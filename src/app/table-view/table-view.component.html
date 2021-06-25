@@ -1,0 +1,109 @@
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Mark as present </h4>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label>{{currentRow.name}} has arrived</label>
+      </div>
+      <div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value=true [checked]="currentRow.checked === true" [(ngModel)]="isPresent">
+        <label class="form-check-label" for="inlineRadio1">YES</label>
+      </div>
+      <div class="form-check form-check-inline ml-5">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value=false [checked]="currentRow.checked === false" [(ngModel)]="isPresent">
+        <label class="form-check-label" for="inlineRadio2">NO</label>
+      </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+  </div>
+</ng-template>
+
+<div class="btn-group btn-group-toggle full-width" ngbRadioGroup name="radioBasic">
+  <label ngbButtonLabel class="btn-primary">
+    <input ngbButton type="radio" value="search" (click)="changeState($event)"> Search
+  </label>
+  <label ngbButtonLabel class="btn-primary">
+    <input ngbButton type="radio" value="add" (click)="changeState($event)"> Add
+  </label>
+  <label ngbButtonLabel class="btn-primary">
+    <input ngbButton type="radio" value="view-all" (click)="changeState($event)"> View all
+  </label>
+</div>
+
+<div *ngIf="state === 'search'">
+  <label for="typeahead-basic">Search by name:</label>
+  <input id="typeahead-basic"
+         type="text"
+         class="form-control"
+         (keyup)="searchByName($event)"/>
+
+  <div *ngIf="apiTable.length > 0" >
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Table</th>
+        <th scope="col">Checked</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let table of apiTable" (click)="open(content, table)">
+        <th scope="row">{{table.name}}</th>
+        <td>{{table.tableNumber}}</td>
+        <td>{{table.checked === true ? "At table" : "Has not arrived yet"}} </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div *ngIf="state === 'add'">
+  <label for="typeahead-basic">Name:</label>
+  <input id="add-name"
+         type="text"
+         class="form-control"
+         [(ngModel)]="table.name"/>
+  <label for="table-selector" class="mt-2">
+    Table:
+  </label>
+  <select class="d-inline-block btn btn-outline-primary mr-2 full-width" id="table-selector"  [(ngModel)]="table.tableNumber">
+    <option *ngFor="let item of [].constructor(14); let i = index" value="{{i+1}}" [selected]="i===0">Table {{i+1}}</option>
+  </select>
+  <div>
+    <button class="btn-primary full-width mt-2" (click)="save()">
+      Save
+    </button>
+  </div>
+</div>
+
+
+<div *ngIf="state === 'view-all'">
+  <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" *ngFor="let aggregated of aggregatedTables" class="mt-lg-5">
+    <ngb-panel title="Table {{aggregated.id}}">
+      <ng-template ngbPanelContent>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Checked</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let person of aggregated.tableList">
+            <td class="half-width"> {{person.name}}</td>
+            <td class="half-width"> {{person.checked === true ? 'At table' : 'Has not arrived yet'}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+
+</div>
