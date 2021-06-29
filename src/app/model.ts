@@ -9,3 +9,9 @@ export interface AggregatedTableDto {
   id: number;
   tableList: Table[];
 }
+
+export interface TableCount {
+  totalInvites: number;
+  totalArrived: number;
+  toArrive: number;
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {AggregatedTableDto, Table} from '../model';
+import {AggregatedTableDto, Table, TableCount} from '../model';
 import {TableService} from '../table.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
@@ -18,6 +18,12 @@ export class TableViewComponent implements OnInit {
     tableNumber: 0
   };
 
+  count: TableCount = {
+    toArrive: 0,
+    totalArrived: 0,
+    totalInvites: 0
+  };
+
   apiTable: Table[] = [];
   currentRow: Table = this.table;
   isPresent = false;
@@ -28,6 +34,10 @@ export class TableViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.tableService.getCount().subscribe(data => {
+      this.count = data;
+    });
+    console.log(this.count);
   }
 
   changeState(ev: any): void {
@@ -43,6 +53,17 @@ export class TableViewComponent implements OnInit {
 
     if (this.state === 'view-all') {
       this.getAll();
+    }
+
+    if (this.state === 'view-not-arrived') {
+      this.getAllNotPresent();
+    }
+
+    if (this.state === 'statistics') {
+      this.tableService.getCount().subscribe(data => {
+        this.count = data;
+        console.log('count is', this.count);
+      });
     }
   }
 
@@ -76,7 +97,13 @@ export class TableViewComponent implements OnInit {
 
   getAll(): void {
     this.tableService.getAll().subscribe(data => {
-      console.log(data);
+      this.aggregatedTables = data;
+    }, error => {
+    });
+  }
+
+  getAllNotPresent(): void {
+    this.tableService.getNotArrived().subscribe(data => {
       this.aggregatedTables = data;
     }, error => {
       console.log(error);

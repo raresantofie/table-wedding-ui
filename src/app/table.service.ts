@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AggregatedTableDto, Table} from './model';
+import {AggregatedTableDto, Table, TableCount} from './model';
 import {Observable} from 'rxjs';
-import {TaskLogger} from 'protractor/built/taskLogger';
 
 @Injectable({
   providedIn: 'root'
@@ -32,4 +31,11 @@ export class TableService {
     return this.httpClient.get<AggregatedTableDto[]>(this.API + 'all');
   }
 
+  getCount(): Observable<TableCount> {
+    return this.httpClient.get<TableCount>(this.API + 'count');
+  }
+
+  getNotArrived(): Observable<AggregatedTableDto[]> {
+    return this.httpClient.get<AggregatedTableDto[]>(this.API + 'not-arrived');
+  }
 }

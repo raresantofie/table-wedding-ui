@@ -29,14 +29,25 @@
     <input ngbButton type="radio" value="search" (click)="changeState($event)"> Search
   </label>
   <label ngbButtonLabel class="btn-primary">
-    <input ngbButton type="radio" value="add" (click)="changeState($event)"> Add
+    <input ngbButton type="radio" value="view-all" (click)="changeState($event)"> All
   </label>
   <label ngbButtonLabel class="btn-primary">
-    <input ngbButton type="radio" value="view-all" (click)="changeState($event)"> View all
+    <input ngbButton type="radio" value="view-not-arrived" (click)="changeState($event)"> Not arrived
+  </label>
+  <label ngbButtonLabel class="btn-primary">
+    <input ngbButton type="radio" value="statistics" (click)="changeState($event)"> Statistics
   </label>
 </div>
 
-<div *ngIf="state === 'search'">
+
+<div *ngIf="state === 'statistics'" class="mt-5 text-center mt-lg-5">
+    <p>{{count.totalInvites}} invited to wedding</p>
+    <p>{{count.totalArrived}} present at the wedding</p>
+    <p>{{count.toArrive}} have not arrived yet.</p>
+</div>
+
+
+<div *ngIf="state === 'search'" class="mt-lg-2">
   <label for="typeahead-basic">Search by name:</label>
   <input id="typeahead-basic"
          type="text"
@@ -49,7 +60,7 @@
       <tr>
         <th scope="col">Name</th>
         <th scope="col">Table</th>
-        <th scope="col">Checked</th>
+        <th scope="col">Status</th>
       </tr>
       </thead>
       <tbody>
@@ -84,8 +95,8 @@
 </div>
 
 
-<div *ngIf="state === 'view-all'">
-  <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" *ngFor="let aggregated of aggregatedTables" class="mt-lg-5">
+<div *ngIf="state === 'view-all' || state === 'view-not-arrived'">
+  <ngb-accordion #acc="ngbAccordion" *ngFor="let aggregated of aggregatedTables" class="mt-lg-5">
     <ngb-panel title="Table {{aggregated.id}}">
       <ng-template ngbPanelContent>
         <table class="table table-striped">
@@ -105,5 +116,4 @@
       </ng-template>
     </ngb-panel>
   </ngb-accordion>
-
 </div>
